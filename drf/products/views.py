@@ -1,7 +1,38 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 from .models import Product
 from .serializers import ProductSerializer
+
+
+# Mixins are similar to Generics but they provide more flexibility and lesser abstraction. We can combine multiple HTTP methods into a single mixin class
+class ProductMixinView(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 # Detail view is for one single item, GET request

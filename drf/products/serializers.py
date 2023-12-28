@@ -12,5 +12,5 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = ["title", "content", "price", "sale_price", "discount"]
-        # fields = "__all__"
-        exclude = ["content"]
+        fields = "__all__"
+        # exclude = ["content"]
