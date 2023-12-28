@@ -25,6 +25,13 @@ class ProductMixinView(
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        # print(self.request.user)
+        content = serializer.validated_data.get("content")
+        if not content:
+            content = "This is a generic content"
+        serializer.save(content=content)
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
@@ -53,10 +60,10 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
     serializer_class = ProductSerializer
 
     def perform_update(self, serializer):
-        instance = serializer.save()
-        if not instance.content:
-            instance.content = instance.title
-            instance.save()
+        content = serializer.validated_data.get("content")
+        if not content:
+            content = "wow amazing content wow"
+        serializer.save(content=content)
 
 
 class ProductDeleteAPIView(generics.DestroyAPIView):
