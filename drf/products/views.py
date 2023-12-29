@@ -1,7 +1,9 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
+
 
 from .models import Product
 from .serializers import ProductSerializer
+from .permissions import IsStaffEditorPermission
 
 
 # Mixins are similar to Generics but they provide more flexibility and lesser abstraction. We can combine multiple HTTP methods into a single mixin class
@@ -53,6 +55,10 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    # Authentication: to validate a user and say user.is_authenticated is true
+    # Permission: to see whether an authenticated user is authorized or not
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
 
 class ProductUpdateAPIView(generics.UpdateAPIView):
