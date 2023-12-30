@@ -5,6 +5,8 @@ from .models import Product
 from .serializers import ProductSerializer
 from .permissions import IsStaffEditorPermission
 
+from api.authentication import CustomTokenAuth
+
 
 # Mixins are similar to Generics but they provide more flexibility and lesser abstraction. We can combine multiple HTTP methods into a single mixin class
 class ProductMixinView(
@@ -57,7 +59,10 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     # Authentication: to validate a user and say user.is_authenticated is true
     # Permission: to see whether an authenticated user is authorized or not
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [
+        authentication.SessionAuthentication,
+        CustomTokenAuth,
+    ]
     permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
 
