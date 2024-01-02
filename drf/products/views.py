@@ -3,9 +3,7 @@ from rest_framework import generics, mixins, permissions, authentication
 
 from .models import Product
 from .serializers import ProductSerializer
-from .permissions import IsStaffEditorPermission
-
-from api.authentication import CustomTokenAuth
+from api.mixins import StaffEditorPermissionMixin
 
 
 # Mixins are similar to Generics but they provide more flexibility and lesser abstraction. We can combine multiple HTTP methods into a single mixin class
@@ -54,16 +52,23 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
 
 # Create view is to add items, list view is to list items, GET and POST request
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(StaffEditorPermissionMixin, generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # Authentication: to validate a user and say user.is_authenticated is true
     # Permission: to see whether an authenticated user is authorized or not
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        CustomTokenAuth,
-    ]
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
+
+    # Since we have already declared this in settings.py file, it will be globally present
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     CustomTokenAuth,
+    # ]
+
+    # We are inheriting permission mixin and so, we don't need the below lines
+    # permission_classes = [
+    #     permissions.IsAdminUser,
+    #     IsStaffEditorPermission,
+    # ]
 
 
 class ProductUpdateAPIView(generics.UpdateAPIView):
