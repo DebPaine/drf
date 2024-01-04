@@ -16,9 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+
+from products.viewsets import ProductViewSet, ProductRetrieveCreateViewSet
+
+# Router is used to create viewset paths for list, retrieve, destroy, etc, for the given viewset
+router = routers.DefaultRouter()
+router.register("products", ProductViewSet, "product")
+router.register(
+    "productsretrievecreate", ProductRetrieveCreateViewSet, "productretrievecreate"
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("api/products/", include("products.urls")),
+    path("api/v2/", include(router.urls)),
 ]
